@@ -1,0 +1,37 @@
+=======================================		README		==========================================
+					PROTOCOL SERVER - CLIENT TCP
+==========================================================================================================
+Nume:	Ghenea Iustina
+Grupa:	322CC
+
+
+===========	CLIENTUL TCP	============
+
+In client se pot citi de la tastatura comenzile	:	exit
+							subscribe [topic] [SF]
+							unsubscribe [topic]
+La primirea unei comenzi (un)subscribe, clientul trimite catre server un mesaj cu topicul la care s-a abonat/dezabonat.
+La primirea comenzii exit, se incheie conexiuea clientului cu serverul.
+
+
+===========	SERVERUL	============
+
+In server se poate citi de la tastatura comanda exit.
+La primirea ei, se inchid toti clientii, cat si serverul.
+
+S-a construit o lista cu clienti. Pt fiecare client exista un identificator connected (care arata daca acesta e conectat sau
+nu) si o lista de topicuri la care este abonat.
+Daca serverul a primit de la clientul tcp un mesaj de subscribe, se adauga topicul in lista de topicuri a clientului respectiv si se seteaza subscribed 1.
+Daca a primit unsubscribe se seteaza subscribed 0 pentru topicul respectiv, pentru a sti ca a fost abonat la el, dar nu mai este.
+Dupa conectare, se verifica in lista de mesaje daca pentru clientul curent s-a primit vreun mesaj cat timp acesta a fost offline si trebuie sa il trimita. 
+
+Daca s-a primit mesaj de la clientul udp, acesta este prelucrat pana la forma ceruta pentru a putea fi trimis clientilor.
+INT: valoarea se afla la buffer + 52, pe 4 octeti
+	buffer[51] - octet de semn
+SHORT_REAL : valoarea se afla la buffer + 52, pe 4 octeti
+	buffer[51] - octet de semn
+FLOAT : valoarea se afla la buffer + 51, pe 2 octeti
+STRING : valoarea se afla la buffer + 51
+
+Dupa formarea mesajului, se parcurge lista de clienti, si se trimite mesajul tututor clientilor abonati si conectati.
+Daca clientii sunt abonati, dar deconectati se adauga mesajul in lista de mesaje, si portul clientului pt care s-a gasit, in vectorul de porturi al mesajului. 
